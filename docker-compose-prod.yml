@@ -1,0 +1,85 @@
+version: "3.2"
+
+networks:
+  external-net:
+    external: true
+  front_back:
+    driver: bridge
+    name: front_back_172.18.0.0/29
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.18.0.0/29
+          gateway: "172.18.0.1"
+  db:
+    driver: bridge
+    name: db_172.19.0.0/29
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.19.0.0/29
+          gateway: "172.19.0.1"
+
+services:
+  #user: couchsport:couchsport
+  mysql:
+    extends:
+      file: docker-compose-base.yml
+      service: mysql
+    expose:
+      - "${DATABASE_PORT}"
+    volumes:
+      - .mysql_database_prod/:/var/lib/mysql
+    networks:
+      db:
+        ipv4_address: "172.19.0.3"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+
+  couchsport.back:
+    depends_on:
+      - mysql
+    extends:
+      file: docker-compose-base.yml
+      service: couchsport.back
+    image: couchsport.back.prod:latest
+    build:
+      context: ./couchsport.back
+      dockerfile: Dockerfile
+      target: release
+    networks:
+      db:
+        ipv4_address: "172.19.0.2"
+      front_back:
+        ipv4_address: "172.18.0.2"
+      external-net:
+    entrypoint: ["./couchsport.back", "--env", "production"]
+    environment:
+      ENV: ${ENV}
+    volumes:
+      - ./couchsport.back/public:/public_prod
+
+  couchsport.front:
+    extends:
+      file: docker-compose-base.yml
+      service: couchsport.front
+    depends_on:
+      - mysql
+      - couchsport.back
+    image: couchsport.front.prod:latest
+    build:
+      context: ./couchsport.front
+      dockerfile: Dockerfile
+      target: release
+    entrypoint:
+      ["wait-for-it.sh", "172.18.0.2:9000", "--", "nginx", "-g", "daemon off;"]
+    networks:
+      front_back:
+        ipv4_address: "172.18.0.3"
+      external-net:
+    environment:
+      NODE_ENV: ${ENV}
+    ports:
+      - "8081:80"
+    volumes:
+      - ./wait-for-it.sh:/bin/wait-for-it.sh

@@ -1,0 +1,1 @@
+export const SHOW_SNACKBAR = 'SHOW_SNACKBAR'

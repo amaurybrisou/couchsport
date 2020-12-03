@@ -1,0 +1,43 @@
+version: "3.2"
+
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${DATABASE_DATABASE}
+      MYSQL_HOST: ${DATABASE_HOST}
+      MYSQL_PORT: ${DATABASE_PORT}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    healthcheck:
+      test: "mysqladmin ping -h localhost"
+      interval: 1s
+      timeout: 1s
+      retries: 60
+
+  couchsport.back:
+    image: couchsport.back:latest
+    build:
+      context: ./couchsport.back
+      dockerfile: Dockerfile
+      target: run
+    restart: always
+    env_file:
+      - ".env.${ENV}"
+    environment:
+      DATABASE_HOST: mysql
+    expose:
+      - ${API_PORT}
+    ports:
+      - "${STATIC_PORT}:${STATIC_PORT}"
+
+  couchsport.front:
+    image: couchsport.front:latest
+    build:
+      context: ./couchsport.front
+      dockerfile: Dockerfile
+    restart: always

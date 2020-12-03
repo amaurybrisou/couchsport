@@ -1,0 +1,52 @@
+version: "3.2"
+
+services:
+  mysql:
+    extends:
+      file: docker-compose-base.yml
+      service: mysql
+    volumes:
+      - .mysql_database/:/var/lib/mysql
+    ports:
+      - 3307:3306
+
+  phpmyadmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: ${DATABASE_PORT}
+
+  couchsport.back:
+    extends:
+      file: docker-compose-base.yml
+      service: couchsport.back
+    depends_on:
+      - mysql
+      - phpmyadmin
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./couchsport.back/public:/
+      - ./couchsport.back:/go/app
+
+  couchsport.front:
+    extends:
+      file: docker-compose-base.yml
+      service: couchsport.front
+    depends_on:
+      - mysql
+      - phpmyadmin
+      - couchsport.back
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./couchsport.front:/usr/src/app/
+    environment:
+      VUE_APP_BACKEND_API_URL: ${VUE_APP_BACKEND_API_URL}
+      VUE_APP_BACKEND_STATIC_URL: ${VUE_APP_BACKEND_STATIC_URL}

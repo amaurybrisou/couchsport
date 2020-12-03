@@ -1,0 +1,15 @@
+{
+  "invalid_credentials": "invalid credentials",
+  "internal_error": "internal error",
+  "session_expired": "your session has expired",
+  "invalid_request": "invalid request",
+  "please_login": "you are not logged in",
+  
+  "user.could_not_create": "the user could not be created : {{.Error}}",
+  "user.could_not_get_profile": "an error occured while fetching your profile",
+
+  "hello": "Hi",
+  "account_auto_created.title": "Your account has been created",
+  "account_auto_created.welcome": "Welcome",
+  "account_auto_created.content": "You have recently sent a message to one of our members. Please note below your automatically generated password."
+}

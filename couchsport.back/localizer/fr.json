@@ -1,0 +1,15 @@
+{
+  "invalid_credentials": "identifiants inconnus",
+  "internal_error": "erreur interne à l'application",
+  "session_expired": "votre session a expirée",
+  "invalid_request": "la requête est invalide",
+  "please_login": "veuillez vous connecter",
+  
+  "could_not_create": "L'utilisateur n'a pas pu être crée : {{.Error}}",
+  "could_not_get_profile": "Une erreur est survenu lors de la récupération de votre profile",
+  
+  "hello": "Bonjour",
+  "account_auto_created.title": "Votre compte a bien été crée",
+  "account_auto_created.welcome": "Bienvenue",
+  "account_auto_created.content": "Vous venez de prendre contact avec un des membres du site, nous vous avons ainsi crée un compte automatiquement.\n Veuillez trouver ci-dessous le mot de passe que nous vous avons automatiquement crée."
+}

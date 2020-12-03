@@ -1,0 +1,6 @@
+.git
+.vscode
+.config.*.json.default
+.env
+env
+public*
