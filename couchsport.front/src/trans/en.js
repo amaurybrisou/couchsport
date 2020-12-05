@@ -41,6 +41,7 @@ export default {
   public: 'public',
   private: 'private',
 
+  invalid_credentials: 'Invalid credentials',
   message: {
     not_found: '{0} not found',
     state: 'your {0} is now {1}',
@@ -67,7 +68,7 @@ export default {
     too_much: 'only {0} {1} allowed',
     stand_by: 'Please stand by',
     empty: "You don't have messages for now",
-    invalid_email: '',
+    invalid_email: 'This email is invalid',
     required: '{1} is required',
     invalid: '{0} is invalid',
     password_hint:

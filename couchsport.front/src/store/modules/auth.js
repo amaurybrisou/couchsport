@@ -25,10 +25,12 @@ const getters = {
 const actions = {
   [AUTH_REQUEST]: async ({ commit, dispatch }, user) => {
     commit(AUTH_REQUEST)
-    const response = await userRepository.login(user).catch(() => {})
-
-    commit(AUTH_SUCCESS, response)
-    dispatch(PROFILE_REQUEST)
+    const response = await userRepository.login(user).then(function (response) {
+      commit(AUTH_SUCCESS, response)
+      dispatch(PROFILE_REQUEST)
+      return response
+    })
+    return response.data
   },
   [AUTH_CHANGE_PASSWORD]: async ({ commit }, user) => {
     commit(AUTH_CHANGE_PASSWORD)

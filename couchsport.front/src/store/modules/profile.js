@@ -39,14 +39,14 @@ const getters = {
 const actions = {
   [PROFILE_REQUEST]: ({ commit }) => {
     commit(PROFILE_REQUEST)
-    profileRepo.get().then(({ data }) => {
-      commit(PROFILE_SUCCESS, data)
+    profileRepo.get().then((response) => {
+      commit(PROFILE_SUCCESS, response.data)
     })
   },
   [SAVE_PROFILE]: ({ commit }) => {
     commit(SAVE_PROFILE)
-    return profileRepo.update(state.profile).then(({ data }) => {
-      commit(PROFILE_SUCCESS, data)
+    return profileRepo.update(state.profile).then((response) => {
+      commit(PROFILE_SUCCESS, response.data)
     })
   },
   [GET_ACTIVITIES]: ({ commit, dispatch }) => {
@@ -57,8 +57,8 @@ const actions = {
     return dispatch(SET_ACTIVITIES)
   },
   [SET_ACTIVITIES]: ({ commit }) => {
-    return activityRepo.all().then(({ data }) => {
-      commit(SET_ACTIVITIES, data)
+    return activityRepo.all().then((response) => {
+      commit(SET_ACTIVITIES, response.data)
       return data
     })
   },
@@ -70,8 +70,8 @@ const actions = {
     return dispatch(SET_LANGUAGES)
   },
   [SET_LANGUAGES]: ({ commit }) => {
-    return languageRepo.all().then(({ data }) => {
-      commit(SET_LANGUAGES, data)
+    return languageRepo.all().then((response) => {
+      commit(SET_LANGUAGES, response.data)
       return data
     })
   }

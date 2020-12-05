@@ -28,6 +28,7 @@ module.exports = {
     config.resolve.alias
       .set('@', './src/')
       .set('~', './node_modules')
+      .set('pages', path.resolve(__dirname, 'src/pages'))
       .set('actions', path.resolve(__dirname, 'src/store/actions'))
       .set('repos', path.resolve(__dirname, 'src/repositories'))
       .set('css', path.resolve(__dirname, 'assets/css'))

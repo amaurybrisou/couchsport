@@ -45,6 +45,7 @@ export default {
   public: 'publique',
   private: 'private',
 
+  invalid_credentials: 'Identifiants invalides',
   message: {
     not_found: '{0} introuvable',
     state: 'votre {0} est maintenant {1}',

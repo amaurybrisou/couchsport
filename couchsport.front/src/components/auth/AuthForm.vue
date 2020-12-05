@@ -1,22 +1,22 @@
 <template>
-  <v-form @submit="submit">
+  <v-form @submit="submitForm">
     <v-card>
       <v-toolbar :color="color">
-        <v-toolbar-title>{{ title }}</v-toolbar-title>
+        <v-toolbar-title>{{ title | capitalize }}</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
         <div v-if="errors.length" color="error">
           <v-alert v-for="(err, i) in errors" :key="i" type="error">
-            {{ err }}
+            {{ $t(err) }}
           </v-alert>
         </div>
-        <div v-if="welcome" color="info">
+        <div v-if="welcome.length > 0" color="info">
           <v-alert type="info">
             {{ welcome | capitalize }}
           </v-alert>
         </div>
 
-        <v-form ref="form" v-model="valid" @keypress.enter.native="submit">
+        <v-form ref="form" v-model="valid" @keypress.enter.native="submitForm">
           <v-text-field
             v-show="!email"
             v-model="user.email"
@@ -39,11 +39,18 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn :color="color" :text="flat" :disabled="!valid" @click="submit">
-          {{ buttonMessage }}
+        <v-btn
+          name="submit"
+          :color="color"
+          :text="flat"
+          :disabled="!valid"
+          @click="submitForm"
+        >
+          {{ buttonMessage | capitalize }}
         </v-btn>
         <v-btn
           v-show="email"
+          name="cancel"
           :color="color"
           :text="flat"
           @click="$emit('hide-change-password-dialog')"
@@ -56,18 +63,26 @@
 </template>
 
 <script>
+  import { mapGetters, mapState } from 'vuex'
   export default {
     name: 'AuthForm',
     props: {
-      welcome: { type: String, default: null, required: false },
-      title: { type: String, default: 'login' },
-      buttonMessage: { type: String, default: 'login' },
-      errors: { type: Array, default: () => [], required: false },
+      welcome: { type: String, default: '', required: false },
+      title: { type: String, default: 'signup' },
+      buttonMessage: { type: String, default: 'signup' },
       flat: { type: Boolean, default: false },
-      color: { type: String, default: 'primary' }
+      color: { type: String, default: 'primary' },
+      submit: {
+        type: Function,
+        default: () => {
+          throw 'Not Implemented'
+        }
+      }
     },
     data() {
       return {
+        errors: [],
+        user: { email: '', password: '' },
         valid: false,
         emailRules: [
           (v) => !!v || this.$t('message.required', ['', this.$t('email')]),
@@ -85,33 +100,14 @@
       }
     },
     computed: {
-      user() {
-        return { email: this.email, password: '' }
-      },
-      email() {
-        return this.$store.state.auth.email || ''
-      },
-      emailErrors() {
-        const errors = []
-        if (!this.$v.user.email.$dirty) return errors
-        !this.$v.user.email.email &&
-          errors.push(this.$t('message.invalid', [this.$t('email')]))
-        !this.$v.user.email.required &&
-          errors.push(this.$t('message.required', ['', this.$t('email')]))
-        return errors
-      },
-      passwordErrors() {
-        const errors = []
-        if (!this.$v.user.password.$dirty) return errors
-        !this.$v.user.password.maxLength &&
-          errors.push(this.$t('message.password_hint', [8]))
-        !this.$v.user.password.required &&
-          errors.push(this.$t('message.required', ['', this.$t('password')]))
-        return errors
-      }
+      ...mapGetters(['isAuthenticated', 'isProfileLoaded']),
+      ...mapState({
+        email: (state) => state.auth.email
+      })
     },
     methods: {
-      submit() {
+      submitForm() {
+        this.submit(this.user)
         this.$emit('submit', this.user)
       }
     }

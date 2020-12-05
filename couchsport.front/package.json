@@ -2,21 +2,14 @@
   "name": "couchsport-vuejs",
   "version": "1.0.0",
   "description": "A Vuejs",
-  "main": "index.js",
   "scripts": {
     "serve": "vue-cli-service serve src/main.js",
     "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit --setupTestFrameworkScriptFile=./tests/setup.js",
     "lint": "vue-cli-service lint",
     "dev": "vue-cli-service build --mode=development --dest=dev --watch --no-clean"
   },
-  "engines": {
-    "node": ">=15"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
+  "main": "index.js",
   "dependencies": {
     "@mdi/font": "^5.8.55",
     "axios": "^0.21.0",
@@ -37,8 +30,10 @@
     "@vue/cli": "^4.5.9",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "^4.5.9",
     "@vue/cli-service": "^4.5.6",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/test-utils": "^1.0.3",
     "babel-eslint": "^10.1.0",
     "deepmerge": "^4.2.2",
     "dotenv-webpack": "^5.1.0",
@@ -65,6 +60,25 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {},
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=15"
   }
 }

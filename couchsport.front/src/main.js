@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 import vuetify from 'plugins/vuetify'
 
 import 'css/app.scss'
@@ -8,8 +7,12 @@ import 'regenerator-runtime/runtime'
 import { i18n } from './trans'
 import AppMessenger from './plugins/messenger'
 import App from './App'
-import router from './router'
-import store from './store'
+
+import { NewStore, storeOptions } from './store'
+const store = NewStore(storeOptions)
+
+import NewRouter from './router'
+const router = NewRouter(store)
 
 import filters from 'plugins/filter'
 Vue.use(filters)

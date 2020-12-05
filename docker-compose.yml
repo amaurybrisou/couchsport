@@ -32,7 +32,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./couchsport.back/public:/
+      - ./couchsport.back/public:/go/app
       - ./couchsport.back:/go/app
 
   couchsport.front:

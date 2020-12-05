@@ -146,13 +146,13 @@
     </v-form>
 
     <!-- Warn section  used to display application state (saving and success) -->
-    <v-dialog v-model="showChangePasswordDialog" persistent width="330">
+    <v-dialog v-model="showChangePasswordDialog" persistent width="350">
       <auth-form
         :title="$t('change_password') | capitalize"
         :button-message="$t('change_password') | capitalize"
         text
         :color="`warning`"
-        @submit="changePassword"
+        :submit="changePassword"
         @hide-change-password-dialog="showChangePasswordDialog = false"
       />
     </v-dialog>
