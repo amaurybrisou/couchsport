@@ -231,13 +231,10 @@
       }
     },
     mounted() {
-      this[NAMESPACE + GET_CONVERSATIONS]()
+      this.GET_CONVERSATIONS()
     },
     methods: {
-      ...mapActions([
-        NAMESPACE + GET_CONVERSATIONS,
-        NAMESPACE + REMOVE_CONVERSATION
-      ]),
+      ...mapActions(NAMESPACE, [GET_CONVERSATIONS, REMOVE_CONVERSATION]),
       openMessageDialog: function (c) {
         this.showContactDialog = true
         this.message.to_id =
@@ -258,7 +255,7 @@
         this.focusedConversation = c
 
         if (c.id != null) {
-          this[NAMESPACE + REMOVE_CONVERSATION](c.id)
+          this.REMOVE_CONVERSATION(c.id)
             .then(() => {
               this.$snackbar('this conversation has been successfully deleted')
             })
