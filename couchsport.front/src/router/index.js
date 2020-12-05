@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import AuthPages from 'pages/auth/AuthPages'
-import About from 'components/About'
-import Home from 'components/Home'
-import Explore from 'components/explore/Explore'
-import Profile from 'components/profile/Profile'
-import PageDetails from 'components/page/PageDetails'
+import About from 'pages/About'
+import Home from 'pages/Home'
+import Explore from 'pages/Explore'
+import Profile from 'pages/profile/Profile'
+import PageDetails from 'pages/PageDetails'
 
 import { defaultLocale, i18n } from '../trans'
 

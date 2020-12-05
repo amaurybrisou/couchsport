@@ -48,10 +48,10 @@
 </template>
 
 <script>
-  import Informations from './Informations'
-  import Activities from './Activities'
-  import Pages from './Pages'
-  import Conversations from './Conversations'
+  import Informations from 'pages/profile/Informations'
+  import Activities from 'pages/profile/Activities'
+  import Pages from 'pages/profile/Pages'
+  import Conversations from 'pages/profile/Conversations'
   import { mapGetters, mapActions } from 'vuex'
   import { GET_ACTIVITIES, GET_LANGUAGES } from 'actions/profile'
 
