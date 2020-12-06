@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PACKAGE: ${{ github.sha }}
-      UPLOAD_PATH: ${{ secrets.REMOTE_API_TARGET }}/${{github.sha }}
+      UPLOAD_PATH: ${{ secrets.REMOTE_TARGET }}/${{github.sha }}
       REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
       REMOTE_USER: ${{ secrets.REMOTE_USER }}
-      REMOTE_API_TARGET: ${{ secrets.REMOTE_API_TARGET }}
+      REMOTE_TARGET: ${{ secrets.REMOTE_TARGET }}
       SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
       SERVER_SSH_KEY_PASSPHRASE: ${{ secrets.SERVER_SSH_KEY_PASSPHRASE }}
     steps:
@@ -47,15 +47,13 @@ jobs:
           username: ${{  env.REMOTE_USER }}
           key: ${{  env.SERVER_SSH_KEY }}
           passphrase: ${{  env.SERVER_SSH_KEY_PASSPHRASE }}
-          envs: UPLOAD_PATH,REMOTE_USER
+          envs: UPLOAD_PATH,REMOTE_USER,REMOTE_TARGET
           script_stop: true
           script: |
             cp $REMOTE_TARGET/shared/docker-compose.yml $UPLOAD_PATH/docker-compose.yml
             cp $REMOTE_TARGET/shared/docker-compose-base.yml $UPLOAD_PATH/docker-compose-base.yml
             cp $REMOTE_TARGET/shared/env.production $UPLOAD_PATH/.env.production
             cp $REMOTE_TARGET/shared/Makefile $UPLOAD_PATH/Makefile
-            ln -s $REMOTE_TARGET/shared/couchsport.front $UPLOAD_PATH/
-            ln -s $REMOTE_TARGET/shared/couchsport.back $UPLOAD_PATH/
             ln -s $REMOTE_TARGET/shared/.mysql_database_prod $UPLOAD_PATH/
 
       - name: remove old symbolic link & create new one
