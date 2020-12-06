@@ -29,8 +29,6 @@ jobs:
           script_stop: true
           script: |
             mkdir "$UPLOAD_PATH"
-            sudo chmod -R 775 "$UPLOAD_PATH"
-            sudo chown -R www-data:$REMOTE_USER "$UPLOAD_PATH"
 
       - name: Deploy to Server (scp)
         uses: appleboy/scp-action@master
