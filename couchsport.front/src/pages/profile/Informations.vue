@@ -164,9 +164,9 @@
 
   import mapStatesTwoWay from 'plugins/mapStatesTwoWay'
 
-  import { MODIFY_PROFILE, SAVE_PROFILE } from 'actions/profile.js'
+  import { MODIFY_PROFILE, SAVE_PROFILE } from 'store/profile/actions'
 
-  import { AUTH_CHANGE_PASSWORD } from 'actions/auth'
+  import { AUTH_CHANGE_PASSWORD } from 'store/auth/actions'
 
   import UploadButton from 'components/utils/UploadButton'
   import AuthForm from 'components/auth/AuthForm'

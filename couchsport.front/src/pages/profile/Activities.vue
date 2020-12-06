@@ -27,7 +27,7 @@
 </template>
 
 <script>
-  import { MODIFY_PROFILE, SAVE_PROFILE } from 'actions/profile.js'
+  import { MODIFY_PROFILE, SAVE_PROFILE } from 'store/profile/actions'
 
   import { mapMutations, mapActions, mapState } from 'vuex'
 

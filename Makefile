@@ -20,12 +20,15 @@ build-front-dev:
 ## start-dev: Start in development mode. Gets reloaded automatically when code changes.
 start-dev:
 	@echo "Running Servers..."
+	docker network create external-net || true
 	docker-compose --env-file $(ENV_FILE_DEV) -f $(DOCKER_COMPOSE_FILE_DEV) up -d
 
-## start in production
+## start: in production
+## start-prod: in production
 start: start-prod
 start-prod:
 	@echo "Starting in production..."
+	docker network create external-net || true
 	docker-compose --env-file $(ENV_FILE_PROD) -f $(DOCKER_COMPOSE_FILE_PROD) up -d
 
 ## build-back-prod: build the backend docker image for prod purpose

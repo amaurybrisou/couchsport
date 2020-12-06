@@ -53,7 +53,15 @@
       name: { type: String, default: '' },
       desc: { type: String, default: '' },
       image: { type: Object, default: () => {} },
-      id: { type: Number, default: 0 },
+      id: {
+        type: Number,
+        default() {
+          throw 'Id cannot be undefined or below 0'
+        },
+        validator(v) {
+          return v && v > 0
+        }
+      },
       url: { type: String, default: '' },
       activities: { type: Array, default: () => [] }
     }

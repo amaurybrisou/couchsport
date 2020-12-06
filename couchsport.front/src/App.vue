@@ -37,7 +37,7 @@
   import WebFontLoader from 'webfontloader'
   import AppNav from 'components/nav/AppNav'
 
-  import { PROFILE_REQUEST } from 'actions/profile'
+  import { PROFILE_REQUEST } from 'store/profile/actions'
 
   import L from 'leaflet'
   delete L.Icon.Default.prototype._getIconUrl

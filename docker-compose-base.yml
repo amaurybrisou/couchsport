@@ -20,11 +20,11 @@ services:
       retries: 60
 
   couchsport.back:
-    image: couchsport.back:latest
+    image: brisouamaury/couchsport.back:latest
     build:
       context: ./couchsport.back
       dockerfile: Dockerfile
-      target: run
+      target: run-dev
     restart: always
     env_file:
       - ".env.${ENV}"
@@ -36,8 +36,9 @@ services:
       - "${STATIC_PORT}:${STATIC_PORT}"
 
   couchsport.front:
-    image: couchsport.front:latest
+    image: brisouamaury/couchsport.front:latest
     build:
       context: ./couchsport.front
       dockerfile: Dockerfile
+      target: run-dev
     restart: always

@@ -13,6 +13,7 @@
       :max-bounds="maxBounds"
       :now-wrap="true"
       :style="`height:${height};width:${width};`"
+      @ready="init"
     >
       <span v-if="value.length > 0">
         <l-marker v-for="(m, idx) in value" :key="idx" :lat-lng="m" />
@@ -137,16 +138,13 @@
         }, 200)
       }
     },
-    mounted() {
-      var that = this
-      this.$nextTick(function () {
-        that.map = this.$refs.map.mapObject
-        that.map.on('click', that.validate)
-        that.map.on('contextmenu', that.validate)
-        this.map.invalidateSize()
-      })
-    },
     methods: {
+      init() {
+        this.map = this.$refs.map.mapObject
+        this.map.on('click', that.validate)
+        this.map.on('contextmenu', that.validate)
+        this.map.invalidateSize()
+      },
       reset() {
         this.value = []
       },

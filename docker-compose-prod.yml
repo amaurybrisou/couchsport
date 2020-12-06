@@ -42,7 +42,7 @@ services:
     extends:
       file: docker-compose-base.yml
       service: couchsport.back
-    image: couchsport.back.prod:latest
+    image: brisouamaury/couchsport.back.prod:latest
     build:
       context: ./couchsport.back
       dockerfile: Dockerfile
@@ -66,13 +66,13 @@ services:
     depends_on:
       - mysql
       - couchsport.back
-    image: couchsport.front.prod:latest
+    image: brisouamaury/couchsport.front.prod:latest
     build:
       context: ./couchsport.front
       dockerfile: Dockerfile
       target: release
-    entrypoint:
-      ["wait-for-it.sh", "172.18.0.2:9000", "--", "nginx", "-g", "daemon off;"]
+    # entrypoint:
+    #   ["wait-for-it.sh", "172.18.0.2:9000", "--", "nginx", "-g", "daemon off;"]
     networks:
       front_back:
         ipv4_address: "172.18.0.3"
@@ -81,5 +81,5 @@ services:
       NODE_ENV: ${ENV}
     ports:
       - "8081:80"
-    volumes:
-      - ./wait-for-it.sh:/bin/wait-for-it.sh
+    # volumes:
+    #   - ./wait-for-it.sh:/usr/bin/wait-for-it.sh

@@ -211,7 +211,7 @@
     SAVE_PAGE,
     CANCEL_EDIT_PAGE,
     REMOVE_ACTIVITY
-  } from 'actions/pages'
+  } from 'store/pages/actions'
 
   import { mapMutations, mapActions, mapState } from 'vuex'
   import mapStatesTwoWay from 'plugins/mapStatesTwoWay'

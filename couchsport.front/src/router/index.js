@@ -35,7 +35,7 @@ export default function (store) {
     return originalPush.call(this, location).catch((err) => err)
   }
 
-  let router = new Router({
+  const routes = {
     mode: 'history',
     routes: [
       {
@@ -90,7 +90,9 @@ export default function (store) {
         ]
       }
     ]
-  })
+  }
+
+  let router = new Router(routes)
 
   router.beforeEach((to, from, next) => {
     let language = to.params.locale

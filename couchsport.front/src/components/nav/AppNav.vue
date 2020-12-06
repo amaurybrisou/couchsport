@@ -7,7 +7,7 @@
       <v-btn :to="{ name: 'explore' }" text tile>
         {{ $t('explore') }}
       </v-btn>
-      <language-button />
+      <language-button :mutator="MODIFY_PROFILE" />
 
       <v-spacer />
 
@@ -75,8 +75,9 @@
 </template>
 
 <script>
-  import { mapGetters, mapState } from 'vuex'
-  import { AUTH_LOGOUT } from 'actions/auth'
+  import { mapGetters, mapMutations, mapState } from 'vuex'
+  import { AUTH_LOGOUT } from 'store/auth/actions'
+  import { MODIFY_PROFILE } from 'store/profile/actions'
   import LanguageButton from 'components/nav/LanguageButton'
 
   export default {
@@ -103,10 +104,10 @@
     },
 
     methods: {
+      ...mapMutations([MODIFY_PROFILE]),
       goToConversations() {
         this.$router.push({ name: 'profile', hash: '#conversations' })
       },
-
       logout: function () {
         this.$store
           .dispatch(AUTH_LOGOUT)

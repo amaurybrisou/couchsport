@@ -14,11 +14,11 @@ GOCMD=$(GOROOT)/bin/go
 DOCKERCMD=$(shell which docker)
 
 DOCKER_IMAGE_DEV=couchsport.front
-DOCKER_IMAGE_PROD=couchsport.front.prod
+DOCKER_IMAGE_PROD=brisouamaury/couchsport.front.prod
 
 ## build development docker image
 build-dev:
-	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . --platform $(ENV) --progress plain -t $(DOCKER_IMAGE_DEV)
+	DOCKER_BUILDKIT=1 $(DOCKERCMD) build --no-cache . --platform $(ENV) --progress plain -t $(DOCKER_IMAGE_DEV)
 
 ## run development docker image
 run-dev:
@@ -27,7 +27,7 @@ run-dev:
 ## build production docker image
 build: build-prod
 build-prod:
-	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . --target release --progress plain -t $(DOCKER_IMAGE_PROD)
+	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . --target release --progress plain -t $(DOCKER_IMAGE_PROD) --network=host
 
 
 help: Makefile

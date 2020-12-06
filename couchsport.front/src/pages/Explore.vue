@@ -63,16 +63,19 @@
             :name="item.name"
             :draggable="false"
             :visible="item.show"
-            @click="openPopUp(item.latlng, item.popup)"
           >
-            <l-popup>
+            <l-popup
+              v-if="item.popup.id"
+              :lat-lng="item.popup.latlng"
+              :options="layers[layer].popupOptions"
+            >
               <marker-popup
-                :id="currentPopup.id"
-                :name="currentPopup.name"
-                :desc="currentPopup.desc"
-                :image="currentPopup.image"
-                :url="currentPopup.url"
-                :activities="currentPopup.activities"
+                :id="item.popup.id"
+                :name="item.popup.name"
+                :desc="item.popup.desc"
+                :image="item.popup.image"
+                :url="item.popup.url"
+                :activities="item.popup.activities"
               />
             </l-popup>
           </l-marker>
@@ -87,7 +90,7 @@
 
   import MarkerPopup from 'components/explore/MarkerPopup'
   import { mapActions, mapState } from 'vuex'
-  import { GET_PAGE } from 'actions/pages'
+  import { GET_PAGE } from 'store/pages/actions'
   // import IntroJS from 'mixins/intro'
 
   export default {
@@ -100,6 +103,7 @@
         items: [],
         search: null,
         select: null,
+        map: null,
         autocompleteFeed: [],
         mapConfig: {
           zoom: 5,
@@ -113,7 +117,6 @@
           attribution:
             '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         },
-        currentPopup: {},
         layer: 'spots',
         layers: {
           spots: {
@@ -181,14 +184,6 @@
 
     methods: {
       ...mapActions('pages', [GET_PAGE]),
-      openPopUp(latLng, popupContent) {
-        this.currentPopup = popupContent
-        this.$refs.map.mapObject.openPopup(
-          null,
-          latLng,
-          this.layers[this.layer].popupOptions
-        )
-      },
       async initLayers() {
         this.initLayer(this.layer)
       },

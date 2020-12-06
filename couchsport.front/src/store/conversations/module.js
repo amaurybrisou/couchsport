@@ -8,7 +8,7 @@ import {
   REMOVE_CONVERSATION,
   CONVERSATION_REMOVED,
   MESSAGES_READ
-} from 'actions/conversations'
+} from 'store/conversations/actions'
 
 import conversationRepo from 'repos/conversation'
 import Vue from 'vue'

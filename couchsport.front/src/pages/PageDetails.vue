@@ -205,7 +205,7 @@
 <script>
   import { LMap, LTileLayer } from 'vue2-leaflet'
 
-  import { GET_PAGE } from 'actions/pages'
+  import { GET_PAGE } from 'store/pages/actions'
 
   import { mapState, mapActions } from 'vuex'
   import IntroJS from 'mixins/intro'

@@ -5,7 +5,7 @@ import 'css/app.scss'
 
 import 'regenerator-runtime/runtime'
 import { i18n } from './trans'
-import AppMessenger from './plugins/messenger'
+import AppMessenger from 'plugins/messenger'
 import App from './App'
 
 import { NewStore, storeOptions } from './store'
@@ -33,7 +33,10 @@ Vue.use(loader, {
   store: store
 })
 
-import { MESSAGES_READ, CONVERSATION_SEND_MESSAGE } from 'actions/conversations'
+import {
+  MESSAGES_READ,
+  CONVERSATION_SEND_MESSAGE
+} from 'store/conversations/actions'
 
 Vue.use(AppMessenger, {
   namespace: 'conversations',

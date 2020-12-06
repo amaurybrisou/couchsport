@@ -8,18 +8,18 @@ import {
   GET_ACTIVITIES,
   GET_LANGUAGES,
   SET_LANGUAGES
-} from 'actions/profile'
+} from 'store/profile/actions'
 
-import pages from './pages'
-import conversations from './conversations'
+import pages from 'store/pages'
+import conversations from 'store/conversations'
 
 import profileRepo from 'repos/profile'
-import activityRepo from 'repos/activity.js'
-import languageRepo from 'repos/language.js'
+import activityRepo from 'repos/activity'
+import languageRepo from 'repos/language'
 
-import axios from 'repos/repository.js'
+import axios from 'repos/repository'
 
-import { AUTH_LOGOUT } from 'actions/auth'
+import { AUTH_LOGOUT } from 'store/auth/actions'
 
 const state = {
   status: '',
@@ -49,30 +49,26 @@ const actions = {
       commit(PROFILE_SUCCESS, response.data)
     })
   },
-  [GET_ACTIVITIES]: ({ commit, dispatch }) => {
+  [SET_ACTIVITIES]: ({ commit }) => {
     if (sessionStorage.activities) {
       const activities = JSON.parse(sessionStorage.activities)
-      return commit(SET_ACTIVITIES, activities)
+      commit(SET_ACTIVITIES, activities)
+      return
     }
-    return dispatch(SET_ACTIVITIES)
-  },
-  [SET_ACTIVITIES]: ({ commit }) => {
-    return activityRepo.all().then((response) => {
+    commit(GET_ACTIVITIES)
+    activityRepo.all().then((response) => {
       commit(SET_ACTIVITIES, response.data)
-      return data
     })
   },
-  [GET_LANGUAGES]: ({ commit, dispatch }) => {
+  [SET_LANGUAGES]: ({ commit }) => {
     if (sessionStorage.languages) {
       const languages = JSON.parse(sessionStorage.languages)
-      return commit(SET_LANGUAGES, languages)
+      commit(SET_LANGUAGES, languages)
+      return
     }
-    return dispatch(SET_LANGUAGES)
-  },
-  [SET_LANGUAGES]: ({ commit }) => {
-    return languageRepo.all().then((response) => {
+    commit(GET_LANGUAGES)
+    languageRepo.all().then((response) => {
       commit(SET_LANGUAGES, response.data)
-      return data
     })
   }
 }
@@ -111,13 +107,14 @@ const mutations = {
       axios.defaults.headers.common['Accept-Language'] = payload.locale
     }
     state.profile = { ...state.profile, ...payload }
-    state.status = 'modified_success'
+    state.status = 'success'
   },
   [SAVE_PROFILE]: (state) => {
     state.status = 'loading'
   },
   [AUTH_LOGOUT]: (state) => {
     state.profile = {}
+    state.status = 'logout'
   }
 }
 

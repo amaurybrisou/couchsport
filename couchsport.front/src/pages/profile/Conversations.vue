@@ -183,7 +183,10 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
-  import { GET_CONVERSATIONS, REMOVE_CONVERSATION } from 'actions/conversations'
+  import {
+    GET_CONVERSATIONS,
+    REMOVE_CONVERSATION
+  } from 'store/conversations/actions'
 
   const NAMESPACE = 'conversations/'
   export default {

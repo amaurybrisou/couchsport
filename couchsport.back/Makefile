@@ -14,7 +14,7 @@ GOCMD=$(GOROOT)/bin/go
 DOCKERCMD=$(shell which docker)
 
 DOCKER_DEV_IMAGE=couchsport.back
-DOCKER_PROD_IMAGE=couchsport.back.prod
+DOCKER_PROD_IMAGE=brisouamaury/couchsport.back.prod
 
 DOCKERFILE_PROD=Dockerfile
 DOCKERFILE_DEV=Dockerfile
@@ -44,7 +44,7 @@ stop-prod:
 
 ## build-dev: Build development container
 build-dev:
-	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . -f $(DOCKERFILE_DEV) --target run-dev -t $(DOCKER_DEV_IMAGE) --platform $(ENV) --progress plain
+	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . -f $(DOCKERFILE_DEV) --target run-dev -t $(DOCKER_DEV_IMAGE) --progress plain
 
 run-soft:
 	$(DOCKERCMD) run -it -p 9000:9000 -v ${PWD}/:/go/app --env-file .env --name $(DOCKER_DEV_IMAGE) $(DOCKER_DEV_IMAGE)

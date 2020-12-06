@@ -1,0 +1,45 @@
+DOCKER_COMPOSE_FILE_PROD=docker-compose-prod.yml
+ENV_FILE_PROD=.env.production
+
+## pull: pull images from registry
+pull: pull-back pull-front
+
+## pull-back: pull back image from registry
+pull-back:
+	docker pull brisouamaury/couchsport.back.prod
+
+## pull-front: pull front image from registry
+pull-front:
+	docker pull brisouamaury/couchsport.front.prod
+
+## start: in production
+start:
+	@echo "Starting in production..."
+	docker network create external-net || true
+	docker-compose --env-file $(ENV_FILE_PROD) -f $(DOCKER_COMPOSE_FILE_PROD) up -d
+
+## stop: Stop all dockers.
+stop:
+	@echo "Stopping Servers..."
+	docker-compose --env-file $(ENV_FILE_PROD) down
+
+arg = $(filter-out $@,$(MAKECMDGOALS))
+## restart: Restart the specified unit
+restart:
+	@if [ ! -z "$(arg)" ]; then echo "Restarting unit $(arg)" && docker-compose --env-file $(ENV_FILE_PROD) restart $(arg);	else echo "Service name required as first argument" && docker-compose ps; fi
+
+## logs: Display logs in the console.
+logs:
+	docker-compose --env-file $(ENV_FILE_PROD) logs -f
+
+## clean: Remove all unused locale Volumes and remove all stopped containers.
+clean:
+	docker system prune -f
+	docker volume prune -f
+
+help: Makefile
+	@echo
+	@echo "Available commands:"
+	@echo
+	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
+	@echo

@@ -21,10 +21,15 @@
 </template>
 
 <script>
-  import { MODIFY_PROFILE } from 'actions/profile'
-  import { mapMutations } from 'vuex'
-
   export default {
+    props: {
+      mutator: {
+        type: Function,
+        default: () => {
+          throw 'Not Implemented'
+        }
+      }
+    },
     data() {
       return {
         languages: {
@@ -33,14 +38,13 @@
         }
       }
     },
-    created() {
-      this.MODIFY_PROFILE({ locale: this.$i18n.locale })
+    mounted() {
+      this.mutator({ locale: this.$i18n.locale })
     },
     methods: {
-      ...mapMutations([MODIFY_PROFILE]),
       changeLocale(locale) {
         this.$i18n.locale = locale
-        this.MODIFY_PROFILE({ locale: locale })
+        this.mutator({ locale: locale })
 
         this.$router.push({
           name: this.$route.name,

@@ -2,7 +2,9 @@
   <v-form @submit="submitForm">
     <v-card>
       <v-toolbar :color="color">
-        <v-toolbar-title>{{ title | capitalize }}</v-toolbar-title>
+        <v-toolbar-title id="toolbar-title">{{
+          title | capitalize
+        }}</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
         <div v-if="errors.length" color="error">
@@ -72,16 +74,21 @@
       buttonMessage: { type: String, default: 'signup' },
       flat: { type: Boolean, default: false },
       color: { type: String, default: 'primary' },
+      errors: {
+        type: Array,
+        default: () => {
+          return []
+        }
+      },
       submit: {
         type: Function,
         default: () => {
-          throw 'Not Implemented'
+          throw new Error('Not Implemented')
         }
       }
     },
     data() {
       return {
-        errors: [],
         user: { email: '', password: '' },
         valid: false,
         emailRules: [

@@ -5,7 +5,7 @@ import Vuetify from 'vuetify'
 import { i18n } from '@/trans'
 
 import { storeOptions, NewStore } from '@/store'
-import AuthForm from '@/components/auth/AuthForm.vue'
+import AuthForm from 'components/auth/AuthForm.vue'
 
 import { cloneDeep, isEqual } from 'lodash'
 
@@ -24,7 +24,7 @@ describe('AuthForm.vue', () => {
       localVue,
       i18n,
       vuetify: new Vuetify(),
-      store: new NewStore(cloneDeep(storeOptions))
+      store: NewStore(cloneDeep(storeOptions))
     }
   })
 
@@ -103,7 +103,7 @@ describe('AuthForm.vue', () => {
     storeOptions.modules.auth.state.email = 'amaury.brisou@gmail.com'
     storeOptions.modules.auth.state.token = 'ae6d17f1-2dc8-4754'
     storeOptions.modules.profile.state.profile.id = '85480'
-    deps.store = new NewStore(cloneDeep(storeOptions))
+    deps.store = NewStore(cloneDeep(storeOptions))
 
     wrapper = await mount(AuthForm, deps)
 
@@ -116,5 +116,35 @@ describe('AuthForm.vue', () => {
     await cancel.trigger('click')
 
     expect(wrapper.emitted()['hide-change-password-dialog']).toBeTruthy()
+  })
+
+  it('should throw an exception if submit is not defined in props', async () => {
+    const user = {
+      email: 'amaury.brisou@puzzledge.org',
+      password: 'Abcdefgh1'
+    }
+
+    deps.data = () => {
+      return {
+        user
+      }
+    }
+
+    wrapper = mount(AuthForm, deps)
+
+    await localVue.nextTick()
+    const submitButton = wrapper.find('[name=submit]')
+
+    expect(submitButton).toBeTruthy()
+
+    const spy = jest.spyOn(wrapper.vm.$options.props.submit, 'default')
+
+    try {
+      spy()
+    } catch (e) {
+      expect(e).toEqual(new Error('Not Implemented'))
+    }
+
+    spy.mockRestore()
   })
 })

@@ -53,7 +53,7 @@
   import Pages from 'pages/profile/Pages'
   import Conversations from 'pages/profile/Conversations'
   import { mapGetters, mapActions } from 'vuex'
-  import { GET_ACTIVITIES, GET_LANGUAGES } from 'actions/profile'
+  import { SET_ACTIVITIES, SET_LANGUAGES } from 'store/profile/actions'
 
   export default {
     name: 'Profile',
@@ -72,11 +72,11 @@
       ...mapGetters(['isProfileLoaded', 'getProfile'])
     },
     mounted() {
-      this.GET_ACTIVITIES(this.$route.params.locale, this.$route.params.locale)
-      this.GET_LANGUAGES(this.$route.params.locale, this.$route.params.locale)
+      this.SET_ACTIVITIES(this.$route.params.locale, this.$route.params.locale)
+      this.SET_LANGUAGES(this.$route.params.locale, this.$route.params.locale)
     },
     methods: {
-      ...mapActions([GET_ACTIVITIES, GET_LANGUAGES])
+      ...mapActions([SET_ACTIVITIES, SET_LANGUAGES])
     }
   }
 </script>

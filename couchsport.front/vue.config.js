@@ -29,7 +29,7 @@ module.exports = {
       .set('@', './src/')
       .set('~', './node_modules')
       .set('pages', path.resolve(__dirname, 'src/pages'))
-      .set('actions', path.resolve(__dirname, 'src/store/actions'))
+      .set('store', path.resolve(__dirname, 'src/store'))
       .set('repos', path.resolve(__dirname, 'src/repositories'))
       .set('css', path.resolve(__dirname, 'assets/css'))
       .set('components', path.resolve(__dirname, 'src/components'))
@@ -37,12 +37,7 @@ module.exports = {
       .set('plugins', path.resolve(__dirname, 'src/plugins'))
       .set('static', path.resolve(__dirname, 'static'))
 
-    config.resolve.extensions
-      .add('.js')
-      .add('.vue')
-      .add('.json')
-      .add('.css')
-      .add('.ts')
+    config.resolve.extensions.add('.js').add('.vue').add('.json').add('.css')
 
     config.plugin('html').tap((args) => {
       args[0].template = path.resolve(__dirname, 'index.html')

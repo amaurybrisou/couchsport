@@ -109,7 +109,7 @@
     PUBLISH_PAGE,
     DELETE_PAGE,
     NEW_PAGE
-  } from 'actions/pages'
+  } from 'store/pages/actions'
   import { mapMutations, mapActions, mapState } from 'vuex'
 
   const NAMESPACE = 'pages/'

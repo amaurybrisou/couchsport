@@ -1,4 +1,4 @@
-FROM --platform=${BUILDPLATFORM} golang:1.15-alpine AS setup
+FROM golang:1.15-alpine AS setup
 WORKDIR /go/app
 ENV CGO_ENABLED=0
 ENV GO111MODULE=on

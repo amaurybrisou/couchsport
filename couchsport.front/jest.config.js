@@ -6,12 +6,12 @@ module.exports = {
     '^.+\\.js$': '<rootDir>/node_modules/babel-jest',
     '^.*\\.vue$': '<rootDir>/node_modules/vue-jest'
   },
-
-  //   collectCoverage: true,
-  //   collectCoverageFrom: ['**/src/*.{js,vue}', '!**/node_modules/**']
+  collectCoverage: true,
+  collectCoverageFrom: ['**/src/**/*.{js,vue}', '!**/node_modules/**'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^actions/(.*)$': '<rootDir>/src/store/actions/$1',
+    '^store/(.*)$': '<rootDir>/src/store/$1',
+    '^components/(.*)$': '<rootDir>/src/components/$1',
     '^plugins/(.*)$': '<rootDir>/src/plugins/$1',
     '^mixins/(.*)$': '<rootDir>/src/mixins/$1',
     '^repos/(.*)$': '<rootDir>/src/repositories/$1'

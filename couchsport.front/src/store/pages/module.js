@@ -19,10 +19,10 @@ import {
   CANCEL_EDIT_PAGE,
   MODIFY_PAGE,
   REMOVE_ACTIVITY
-} from '../actions/pages'
+} from 'store/pages/actions'
 
-import pagesRepo from '../../repositories/pages'
-import imagesRepo from '../../repositories/images'
+import pagesRepo from 'repos/pages'
+import imagesRepo from 'repos/images'
 
 import Vue from 'vue'
 
