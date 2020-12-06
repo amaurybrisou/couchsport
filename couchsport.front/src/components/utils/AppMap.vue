@@ -141,8 +141,8 @@
     methods: {
       init() {
         this.map = this.$refs.map.mapObject
-        this.map.on('click', that.validate)
-        this.map.on('contextmenu', that.validate)
+        this.map.on('click', this.validate)
+        this.map.on('contextmenu', this.validate)
         this.map.invalidateSize()
       },
       reset() {
