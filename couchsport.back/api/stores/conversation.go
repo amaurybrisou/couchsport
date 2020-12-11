@@ -19,11 +19,6 @@ func (me conversationStore) Migrate() {
 	if err != nil {
 		panic(err)
 	}
-	// me.Db.Model(&models.Message{}).AddForeignKey("owner_id", "conversations(id)", "CASCADE", "CASCADE")
-	// me.Db.Model(&models.Message{}).AddForeignKey("from_id", "profiles(id)", "CASCADE", "CASCADE")
-	// me.Db.Model(&models.Message{}).AddForeignKey("to_id", "profiles(id)", "CASCADE", "CASCADE")
-	// me.Db.Model(&models.Conversation{}).AddForeignKey("from_id", "profiles(id)", "CASCADE", "CASCADE")
-	// me.Db.Model(&models.Conversation{}).AddForeignKey("to_id", "profiles(id)", "CASCADE", "CASCADE")
 }
 
 //Delete a conversation by convID (softdelete)

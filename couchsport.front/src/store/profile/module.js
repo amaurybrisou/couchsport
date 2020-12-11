@@ -10,8 +10,8 @@ import {
   SET_LANGUAGES
 } from 'store/profile/actions'
 
-import pages from 'store/pages'
-import conversations from 'store/conversations'
+import pages from 'store/pages/module'
+import conversations from 'store/conversations/module'
 
 import profileRepo from 'repos/profile'
 import activityRepo from 'repos/activity'
@@ -24,7 +24,7 @@ import { AUTH_LOGOUT } from 'store/auth/actions'
 const state = {
   status: '',
   profile: {
-    locale: 'fr'
+    locale: localStorage.getItem('locale') || 'fr'
   },
   activities: [],
   languages: []
@@ -33,20 +33,22 @@ const state = {
 const getters = {
   getProfile: (state) => state.profile,
   isProfileLoaded: (state) => !!state.profile.id,
-  getLocale: (state) => state.profile.locale
+  getLocale: (state) => localStorage.getItem('locale') || state.profile.locale
 }
 
 const actions = {
   [PROFILE_REQUEST]: ({ commit }) => {
     commit(PROFILE_REQUEST)
-    profileRepo.get().then((response) => {
+    return profileRepo.get().then((response) => {
       commit(PROFILE_SUCCESS, response.data)
+      return response
     })
   },
   [SAVE_PROFILE]: ({ commit }) => {
     commit(SAVE_PROFILE)
     return profileRepo.update(state.profile).then((response) => {
       commit(PROFILE_SUCCESS, response.data)
+      return response
     })
   },
   [SET_ACTIVITIES]: ({ commit }) => {
@@ -56,8 +58,9 @@ const actions = {
       return
     }
     commit(GET_ACTIVITIES)
-    activityRepo.all().then((response) => {
+    return activityRepo.all().then((response) => {
       commit(SET_ACTIVITIES, response.data)
+      return response
     })
   },
   [SET_LANGUAGES]: ({ commit }) => {
@@ -67,8 +70,9 @@ const actions = {
       return
     }
     commit(GET_LANGUAGES)
-    languageRepo.all().then((response) => {
+    return languageRepo.all().then((response) => {
       commit(SET_LANGUAGES, response.data)
+      return response
     })
   }
 }
@@ -103,8 +107,9 @@ const mutations = {
     state.status = 'error'
   },
   [MODIFY_PROFILE]: (state, payload) => {
-    if (Object.hasOwnProperty('locale')) {
+    if (payload.hasOwnProperty('locale')) {
       axios.defaults.headers.common['Accept-Language'] = payload.locale
+      localStorage.setItem('locale', payload.locale)
     }
     state.profile = { ...state.profile, ...payload }
     state.status = 'success'

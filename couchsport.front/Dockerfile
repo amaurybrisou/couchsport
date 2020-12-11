@@ -13,11 +13,10 @@ FROM setup as build
 COPY . .
 RUN npm run build
 
-FROM flashspys/nginx-static as release
+FROM nginx:1.17.9-alpine as release
 WORKDIR /usr/share/nginx/html
 COPY --from=build /usr/src/app/dist/ .
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d
-EXPOSE 80
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

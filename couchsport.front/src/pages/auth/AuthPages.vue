@@ -21,15 +21,15 @@
 <script>
   import { AUTH_REQUEST, AUTH_SIGNUP } from 'store/auth/actions'
   import AuthForm from 'components/auth/AuthForm'
-  import { mapGetters } from 'vuex'
 
   export default {
+    name: 'AuthPages',
     components: { AuthForm },
     props: {
       welcome: { type: String, default: '' }
     },
     data() {
-      return { flat: false, color: 'primary' }
+      return { flat: false, color: 'primary', errors: [] }
     },
     computed: {
       submit() {
@@ -40,26 +40,35 @@
       },
       buttonMessage() {
         return this.$t(this.$route.name)
-      },
-      ...mapGetters(['errors'])
+      }
     },
     methods: {
-      SignUp: async function (user) {
-        const response = await this.$store.dispatch(AUTH_SIGNUP, user)
-
-        if (!response) return
-
-        this.$router.push({
-          name: 'login',
-          params: {
-            welcome: this.$t('message.signup_success_welcome')
-          }
-        })
+      SignUp: function (user) {
+        this.errors = []
+        this.$store
+          .dispatch(AUTH_SIGNUP, user)
+          .then(() => {
+            this.$router.push({
+              name: 'login',
+              params: {
+                welcome: this.$t('message.signup_success_welcome')
+              }
+            })
+          })
+          .catch((error) => {
+            this.errors = [error]
+          })
       },
-      Login: async function (user) {
-        const response = await this.$store.dispatch(AUTH_REQUEST, user)
-        if (!response) return
-        this.$router.push({ name: 'profile' })
+      Login: function (user) {
+        this.errors = []
+        this.$store
+          .dispatch(AUTH_REQUEST, user)
+          .then(() => {
+            this.$router.push({ name: 'informations' })
+          })
+          .catch((error) => {
+            this.errors = [error]
+          })
       }
     }
   }

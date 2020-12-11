@@ -384,14 +384,15 @@
         this.$loader(true)
         this.SAVE_PAGE(this.state)
           .then(() => {
-            this.$loader(false)
             this.showEditPageDialog = false
             this.$emit('page-saved', true)
             this.delMarker()
           })
           .catch(() => {
-            this.$loader(false)
             this.$emit('page-saved', false)
+          })
+          .finally(() => {
+            this.$loader(false)
           })
       },
       removeActivity(activity) {
@@ -455,6 +456,11 @@
               File: file.name
             })
             that.imagesErrors = []
+          }
+
+          reader.onerror = function (error) {
+            console.error(error)
+            that.$snackbar('message.error_reading', ['image'])
           }
 
           reader.readAsDataURL(file)

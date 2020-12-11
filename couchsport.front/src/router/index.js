@@ -8,20 +8,29 @@ import Explore from 'pages/Explore'
 import Profile from 'pages/profile/Profile'
 import PageDetails from 'pages/PageDetails'
 
+import Informations from 'pages/profile/Informations'
+import Activities from 'pages/profile/Activities'
+import Pages from 'pages/profile/Pages'
+import Conversations from 'pages/profile/Conversations'
+
 import { defaultLocale, i18n } from '../trans'
 
 Vue.use(Router)
 
+var router
+
 export default function (store) {
-  const ifNotAuthenticated = (to, from, next) => {
+  if (router) return router
+
+  const requiresToLogin = (to, from, next) => {
     if (!store.getters.isAuthenticated) {
       next()
       return
     }
-    next({ name: 'profile', params: { locale: i18n.locale } })
+    next({ name: 'informations', params: { locale: i18n.locale } })
   }
 
-  const ifAuthenticated = (to, from, next) => {
+  const requiresPrivileges = (to, from, next) => {
     if (store.getters.isAuthenticated) {
       next()
       return
@@ -32,7 +41,7 @@ export default function (store) {
   const originalPush = Router.prototype.push
 
   Router.prototype.push = function push(location) {
-    return originalPush.call(this, location).catch((err) => err)
+    return originalPush.call(this, location).catch(() => console.log)
   }
 
   const routes = {
@@ -40,7 +49,7 @@ export default function (store) {
     routes: [
       {
         path: '/',
-        redirect: `/${defaultLocale}`
+        redirect: `/${store.getters.getLocale || defaultLocale}`
       },
       {
         path: '/:locale',
@@ -69,7 +78,7 @@ export default function (store) {
             name: 'login',
             component: AuthPages,
             props: true,
-            beforeEnter: ifNotAuthenticated
+            beforeEnter: requiresToLogin
           },
           {
             path: 'pages/:page_name',
@@ -85,22 +94,45 @@ export default function (store) {
             path: 'profile',
             name: 'profile',
             component: Profile,
-            beforeEnter: ifAuthenticated
+            beforeEnter: requiresPrivileges,
+            children: [
+              {
+                path: '',
+                name: 'informations',
+                component: Informations
+              },
+              {
+                path: 'activities',
+                name: 'activities',
+                component: Activities
+              },
+              {
+                path: 'pages',
+                name: 'pages',
+                component: Pages
+              },
+              {
+                path: 'conversations',
+                name: 'conversations',
+                component: Conversations
+              }
+            ]
           }
         ]
       }
     ]
   }
 
-  let router = new Router(routes)
+  router = new Router(routes)
 
   router.beforeEach((to, from, next) => {
     let language = to.params.locale
-    if (!language) {
-      language = defaultLocale
+    if (['fr', 'en'].indexOf(language) < 0) {
+      language = store.getters.getLocale || defaultLocale
     }
 
     i18n.locale = language
+    to.params.locale = language
     next()
   })
 

@@ -26,8 +26,8 @@ module.exports = {
     config.entry('app').add('./src/main.js').end()
 
     config.resolve.alias
-      .set('@', './src/')
-      .set('~', './node_modules')
+      .set('@', path.resolve(__dirname, 'src/'))
+      .set('~', path.resolve(__dirname, 'node_modules'))
       .set('pages', path.resolve(__dirname, 'src/pages'))
       .set('store', path.resolve(__dirname, 'src/store'))
       .set('repos', path.resolve(__dirname, 'src/repositories'))

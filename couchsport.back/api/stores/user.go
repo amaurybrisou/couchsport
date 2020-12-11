@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/models"
 	"github.com/amaurybrisou/couchsport.back/api/utils"
 	"gorm.io/gorm"
@@ -60,7 +61,7 @@ func (me userStore) New(user models.User) (models.User, error) {
 	}
 
 	if count > 0 {
-		return models.User{}, fmt.Errorf("user already exist")
+		return models.User{}, api_errors.ErrAlreadyExists
 	}
 
 	if err := me.Db.Create(&user).Error; err != nil {
@@ -86,7 +87,7 @@ func (me userStore) GetProfile(userID uint) (models.Profile, error) {
 		Preload("Profile.Languages").
 		Preload("Profile.Activities").
 		Where("id = ?", userID).First(&out).Error; err != nil {
-		return out.Profile, err
+		return out.Profile, gorm.ErrRecordNotFound
 	}
 	return out.Profile, nil
 }

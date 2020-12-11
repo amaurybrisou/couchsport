@@ -54,8 +54,11 @@ export default {
     success_sending_check_email: 'your {0} has been sent, check your emails',
 
     error_saving: 'an error occured while saving your {0}',
+    error_sending: 'an error occured while sending your {0}',
     error_deleting: 'an error occured while deleting your {0}',
     error_updating: 'an error occured while updating your {0}',
+    error_fetching: 'an error occured while fetching your {0}',
+    error_reading: 'an error occured while reading your {0}',
     length_below: 'the {0} length must be below {1}',
     length_above: 'the {0} length must be above {1}',
     length_between:
@@ -74,6 +77,20 @@ export default {
     password_hint:
       'password must contains {0} characters (at least one digit, on upper case and one lower case character)',
     signup_success_welcome: 'welcome'
+  },
+  api_errors: {
+    could_not_create: 'user could not be created',
+    invalid_data: 'invalid data',
+    already_exist: 'record already exists',
+    record_not_found: 'record not found',
+    invalid_filename: 'invalid filename',
+    internal_error: 'internal error, please contact us',
+    does_not_own: 'you are not allowed to do this',
+    could_not_delete: 'error deleting',
+    could_not_create: 'error creating',
+    could_not_update: 'error updating',
+    invalid_credentials: 'invalid credentials',
+    session_expired: 'your session has expired'
   },
   p: {
     about: {

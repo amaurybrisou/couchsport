@@ -22,19 +22,21 @@ const actions = {
     commit(GET_CONVERSATIONS)
     return conversationRepo.mines().then((response) => {
       commit(GOT_CONVERSATIONS, response.data)
+      return response
     })
   },
   [CONVERSATION_SEND_MESSAGE]: ({ commit }, message) => {
     commit(CONVERSATION_SEND_MESSAGE)
     return conversationRepo.sendMessage(message).then((response) => {
       commit(CONVERSATION_MESSAGE_SENT, response.data)
-      return data
+      return response
     })
   },
   [REMOVE_CONVERSATION]: ({ commit }, id) => {
     commit(REMOVE_CONVERSATION)
-    return conversationRepo.delete(id).then(() => {
+    return conversationRepo.delete(id).then((response) => {
       commit(CONVERSATION_REMOVED, id)
+      return response
     })
   }
 }

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/models"
 	"github.com/amaurybrisou/couchsport.back/api/stores"
 	log "github.com/sirupsen/logrus"
@@ -27,34 +28,34 @@ func (me imageHandler) Delete(userID uint, w http.ResponseWriter, r *http.Reques
 	image, err := me.parseBody(r.Body)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	owns, err := me.Store.UserStore().OwnImage(userID, image.OwnerID, image.ID)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if !owns {
 		log.Error(err)
-		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusForbidden)
+		http.Error(w, api_errors.ErrDoesNotOwn.Error(), http.StatusForbidden)
 		return
 	}
 
 	result, err := me.Store.ImageStore().Delete(image.ID)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrCouldNotDelete.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	json, err := json.Marshal(struct{ Result bool }{Result: result})
 
 	if err != nil {
-		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInternalError.Error(), http.StatusInternalServerError)
 		return
 	}
 

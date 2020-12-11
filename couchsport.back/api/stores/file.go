@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/types"
 	"github.com/amaurybrisou/couchsport.back/api/utils"
 	log "github.com/sirupsen/logrus"
@@ -21,8 +22,7 @@ type fileStore struct {
 func (me fileStore) Save(directory, filename string, buf io.Reader) (string, error) {
 
 	if filename == "" {
-		err := fmt.Errorf("filename is incorrect")
-		return "", err
+		return "", api_errors.ErrInvalidFilename
 	}
 
 	path := me.ImageBasePath

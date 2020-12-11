@@ -289,7 +289,6 @@
           languages: (state) => state.profile.profile.languages
         },
         function (payload) {
-          console.log(payload)
           this.MODIFY_PROFILE(payload)
         }
       ),
@@ -316,12 +315,13 @@
         this.$loader(true)
         this.SAVE_PROFILE()
           .then(() => {
-            this.$loader(false)
             this.$snackbar(this.$t('message.success_saving', ['profile']))
           })
           .catch(() => {
-            this.$loader(false)
             this.$snackbar(this.$t('message.error_saving', ['profile']))
+          })
+          .finally(() => {
+            this.$loader(false)
           })
       },
       changePassword(user) {
@@ -332,13 +332,14 @@
               this.$t('message.success_updating', [this.$t('password')])
             )
             this.showChangePasswordDialog = false
-            this.$loader(false)
           })
           .catch(() => {
-            this.$loader(false)
             this.$snackbar(
               this.$t('message.error_updating', [this.$t('password')])
             )
+          })
+          .finally(() => {
+            this.$loader(false)
           })
       },
       handleImage(formData) {
@@ -350,13 +351,18 @@
           }
           var that = this
           var reader = new FileReader()
-          reader.onload = function (e) {
+          reader.onload = function (error) {
             that.$loader(false)
-            that.MODIFY_PROFILE({ avatar: e.target.result })
+            that.MODIFY_PROFILE({ avatar: error.target.result })
             that.MODIFY_PROFILE({ avatar_file: file.name })
           }
 
-          this.$loader(true)
+          reader.onerror = function (error) {
+            console.error(error)
+            that.$snackbar('message.error_reading', ['image'])
+          }
+
+          that.$loader(true)
           reader.readAsDataURL(file)
         }
       }

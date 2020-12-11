@@ -325,18 +325,16 @@
     },
     methods: {
       ...mapActions('pages', [GET_PAGE]),
-      async sendMessage() {
+      sendMessage() {
         if (!this.message.to_id) return
 
         this.$loader(true)
-        const response = await this.$messenger
-          .sendMessage(this.message)
-          .catch(function () {
-            this.$loader(false)
-            this.$snackbar(
-              this.$t('message.error_sending', [this.$t('_message')])
-            )
-          })
+        this.$messenger.sendMessage(this.message).catch(function () {
+          this.$loader(false)
+          this.$snackbar(
+            this.$t('message.error_sending', [this.$t('_message')])
+          )
+        })
         this.showContactDialog = false
         this.$loader(false)
 

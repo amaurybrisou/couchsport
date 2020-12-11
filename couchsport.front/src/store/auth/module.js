@@ -9,58 +9,51 @@ import {
   AUTH_CHANGE_PASSWORD_SUCCESS
 } from 'store/auth/actions'
 
-import { PROFILE_REQUEST } from 'store/profile/actions'
-
 import userRepository from 'repos/user'
 import axios from 'repos/repository'
 
 const state = {
   email: localStorage.getItem('user-email') || '',
   token: localStorage.getItem('token') || '',
-  status: '',
-  errors: []
+  status: ''
 }
 
 const getters = {
   isAuthenticated: (state) => !!state.email && !!state.token,
-  authStatus: (state) => state.status,
-  errors: (state) => state.errors
+  authStatus: (state) => state.status
 }
 
 const actions = {
-  [AUTH_REQUEST]: async ({ commit, dispatch }, user) => {
+  [AUTH_REQUEST]: ({ commit }, user) => {
     commit(AUTH_REQUEST)
-    const response = await userRepository.login(user)
-
-    if (response.status === 200) {
-      commit(AUTH_SUCCESS, response)
-      dispatch(PROFILE_REQUEST)
-      return response.data
-    }
+    return userRepository.login(user).then((response) => {
+      commit(AUTH_SUCCESS, response.data)
+    })
   },
-  [AUTH_SIGNUP]: async ({ commit }, user) => {
+  [AUTH_SIGNUP]: ({ commit }, user) => {
     commit(AUTH_SIGNUP)
-    const response = await userRepository.create(user)
-    if (response.status === 200) {
-      commit(AUTH_SIGNUP_SUCCESS, response)
-      return response.data
-    }
+    return userRepository.create(user).then(() => {
+      commit(AUTH_SIGNUP_SUCCESS)
+    })
   },
-  [AUTH_CHANGE_PASSWORD]: async ({ commit }, user) => {
+  [AUTH_CHANGE_PASSWORD]: ({ commit }, user) => {
     commit(AUTH_CHANGE_PASSWORD)
-    const response = await userRepository.changePassword(user)
-
-    if (response.status === 200) {
+    return userRepository.changePassword(user).then(() => {
       commit(AUTH_CHANGE_PASSWORD_SUCCESS)
-      return response.data
-    }
+    })
   },
   [AUTH_LOGOUT]: async ({ commit }) => {
     commit(AUTH_LOGOUT)
-    return userRepository.logout()
+    return userRepository
+      .logout()
+      .then(() => {
+        commit(AUTH_CHANGE_PASSWORD_SUCCESS)
+      })
+      .catch(console.log)
   },
   [AUTH_ERROR]: ({ commit }) => {
     commit(AUTH_LOGOUT)
+    commit(AUTH_ERROR)
   }
 }
 
@@ -68,11 +61,12 @@ const mutations = {
   [AUTH_REQUEST]: (state) => {
     state.status = 'loading'
   },
-  [AUTH_SUCCESS]: (state, resp) => {
-    axios.defaults.headers.common.Authorization = resp.data.token
-    localStorage.setItem('user-email', resp.data.email)
-    localStorage.setItem('token', resp.data.token)
-    state.email = resp.data.email
+  [AUTH_SUCCESS]: (state, data) => {
+    axios.defaults.headers.common.Authorization = data.token
+    state.email = data.email
+    state.token = data.token
+    localStorage.setItem('user-email', data.email)
+    localStorage.setItem('token', data.token)
     state.status = 'success'
   },
   [AUTH_CHANGE_PASSWORD]: (state) => {
@@ -87,16 +81,16 @@ const mutations = {
   [AUTH_SIGNUP_SUCCESS]: (state) => {
     state.status = 'signup-success'
   },
-  [AUTH_ERROR]: (state, error) => {
-    state.status = 'error'
-    state.errors = [error]
-    state.email = null
-    localStorage.removeItem('user-email')
+  [AUTH_ERROR]: (state) => {
+    state.status = 'auth-error'
   },
   [AUTH_LOGOUT]: (state) => {
     localStorage.removeItem('user-email')
+    localStorage.removeItem('token')
     delete axios.defaults.headers.common.Authorization
     state.email = null
+    state.token = null
+    state.status = 'logged-out'
   }
 }
 

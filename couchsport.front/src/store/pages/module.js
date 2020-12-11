@@ -37,8 +37,9 @@ const getters = {}
 const actions = {
   [GET_PAGES]: ({ commit }) => {
     commit(GET_PAGES)
-    return pagesRepo.mines().then(({ data }) => {
-      commit(GOT_PAGES, data)
+    return pagesRepo.mines().then((response) => {
+      commit(GOT_PAGES, response.data)
+      return response
     })
   },
   [GET_PAGE]: ({ commit }, params) => {
@@ -54,30 +55,39 @@ const actions = {
     what === 'edit' && commit(SAVE_PAGE)
     what === 'new' && commit(NEW_PAGE)
 
-    return pagesRepo[what](state.edited_page).then(({ data }) => {
-      what === 'edit' && commit(PAGE_SAVED, data)
-      what === 'new' && commit(NEW_PAGE_SAVED, data)
+    return pagesRepo[what](state.edited_page).then((response) => {
+      what === 'edit' && commit(PAGE_SAVED, response.data)
+      what === 'new' && commit(NEW_PAGE_SAVED, response.data)
       commit(CANCEL_EDIT_PAGE)
+      return response
     })
   },
   [DELETE_PAGE]: ({ commit }, page) => {
     commit(DELETE_PAGE)
-    return pagesRepo
-      .delete(page)
-      .then((onfulfilled) => onfulfilled && commit(PAGE_DELETED, page.id))
+    return pagesRepo.delete(page).then((response) => {
+      response.data && response.data.result && commit(PAGE_DELETED, page.id)
+      return response
+    })
   },
   [PAGE_DELETE_IMAGE]: ({ commit }, imageidX) => {
     commit(PAGE_DELETE_IMAGE)
     if (!state.edited_page.images[imageidX].id) {
-      return commit(PAGE_IMAGE_DELETED, imageidX)
+      commit(PAGE_IMAGE_DELETED, imageidX)
+      return Promise.resolve()
     }
     return imagesRepo
       .delete(state.edited_page.images[imageidX])
-      .then(commit(PAGE_IMAGE_DELETED, imageidX))
+      .then((response) => {
+        commit(PAGE_IMAGE_DELETED, imageidX)
+        return response
+      })
   },
   [PUBLISH_PAGE]: ({ commit }, page) => {
     commit(PUBLISH_PAGE, page.public)
-    return pagesRepo.publish(page).then(commit(PAGE_PUBLISHED, page))
+    return pagesRepo.publish(page).then((response) => {
+      commit(PAGE_PUBLISHED, page)
+      return response
+    })
   }
 }
 

@@ -3,6 +3,7 @@ package stores
 import (
 	"github.com/amaurybrisou/couchsport.back/api/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type languageStore struct {
@@ -205,9 +206,8 @@ func (me languageStore) Migrate() {
 		{Name: "Nhuang, Chuang", NativeName: "Saɯ cueŋƅ, Saw cuengh"},
 	}
 
-	for _, l := range languages {
-		me.Db.FirstOrCreate(&l, l)
-	}
+	me.Db.Clauses(clause.OnConflict{DoNothing: true}).Create(&languages)
+
 }
 
 //All returns all the languages in db

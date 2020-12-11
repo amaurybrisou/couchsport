@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import profile from 'store/profile'
-import auth from 'store/auth'
+import profile from 'store/profile/module'
+import auth from 'store/auth/module'
 
 import axios from 'repos/repository'
+import NewRouter from '@/router'
 
 import { AUTH_ERROR } from 'store/auth/actions'
 
@@ -23,6 +24,7 @@ export const storeOptions = {
 
 export const NewStore = function (storeOptions) {
   const store = new Vuex.Store(storeOptions)
+  const router = NewRouter(store)
 
   axios.interceptors.response.use(
     function (r) {
@@ -33,13 +35,20 @@ export const NewStore = function (storeOptions) {
         error.response &&
         (error.response.status === 403 || error.response.status === 401)
       ) {
-        store.dispatch(AUTH_ERROR)
+        store
+          .dispatch(AUTH_ERROR)
+          .catch(() => console.log)
+          .finally(
+            router.push({
+              name: 'login',
+              params: {
+                locale: store.getters.getLocale
+              }
+            })
+          )
       }
-      let ret = error
-      if (error && error.response) ret = error.response.data
-      store.commit(AUTH_ERROR, ret)
-      // return Promise.reject(ret)
-      return error
+
+      return Promise.reject(`api_errors.${error.response.data}`)
     }
   )
 

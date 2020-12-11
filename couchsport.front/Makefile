@@ -13,7 +13,7 @@ RELEASE_PATH=$(CURDIR)/release
 GOCMD=$(GOROOT)/bin/go
 DOCKERCMD=$(shell which docker)
 
-DOCKER_IMAGE_DEV=couchsport.front
+DOCKER_IMAGE_DEV=brisouamaury/couchsport.front
 DOCKER_IMAGE_PROD=brisouamaury/couchsport.front.prod
 
 ## build development docker image
@@ -27,7 +27,7 @@ run-dev:
 ## build production docker image
 build: build-prod
 build-prod:
-	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . --target release --progress plain -t $(DOCKER_IMAGE_PROD) --network=host
+	DOCKER_BUILDKIT=1 $(DOCKERCMD) build --no-cache . --target release --progress plain -t $(DOCKER_IMAGE_PROD) --network=host
 
 
 help: Makefile

@@ -1,10 +1,10 @@
 package stores
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/models"
 	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
@@ -129,7 +129,7 @@ func (me *sessionStore) DestroyAllByUserID(userID uint) (bool, error) {
 
 func (me *sessionStore) CreateCookie() (*http.Cookie, error) {
 	if me.token == "" {
-		return nil, fmt.Errorf("cannot generate cookie without token")
+		return nil, api_errors.ErrInvalidData
 	}
 
 	return &http.Cookie{

@@ -26,7 +26,9 @@
     </v-carousel>
     <app-nav />
     <v-main>
-      <transition name="fade" mode="out-in"><router-view /></transition>
+      <transition name="fade" mode="out-in">
+        <router-view />
+      </transition>
     </v-main>
     <app-snack-bar />
     <app-loader />

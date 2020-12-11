@@ -42,7 +42,8 @@
             <v-list-item
               v-for="link in links"
               :key="link.name"
-              :to="{ name: 'profile', hash: link.to }"
+              :to="{ name: link.to }"
+              exact
             >
               {{ $t(`${link.name}`) | capitalize }}
             </v-list-item>
@@ -86,10 +87,10 @@
     data() {
       return {
         links: [
-          { auth: true, to: '#informations', name: 'profile' },
-          { auth: true, to: '#activities', name: 'activities' },
-          { auth: true, to: '#conversations', name: 'conversations' },
-          { auth: true, to: '#pages', name: 'pages' }
+          { auth: true, to: 'informations', name: 'profile' },
+          { auth: true, to: 'activities', name: 'activities' },
+          { auth: true, to: 'conversations', name: 'conversations' },
+          { auth: true, to: 'pages', name: 'pages' }
         ]
       }
     },
@@ -111,7 +112,7 @@
       logout: function () {
         this.$store
           .dispatch(AUTH_LOGOUT)
-          .then(() => this.$router.push({ name: 'home' }))
+          .finally(() => this.$router.push({ name: 'home' }))
       }
     }
   }

@@ -7,17 +7,17 @@ root = "/go/app"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-#cmd = "go build -o ./tmp/main ."
+cmd = "go build -o ./tmp/main ."
 # Binary file yields from `cmd`.
 #bin = "tmp/main"
 # Customize binary.
-full_bin = "unset GOPATH; GO111MODULE=on go run /go/app/main.go"
+full_bin = "unset GOPATH; GO111MODULE=on ./tmp/main"
 # Watch these filename extensions.
-include_ext = ["go", "tpl", "tmpl", "html"]
+include_ext = ["go", "tpl", "tmpl", "html", "json"]
 # Ignore these filename extensions or directories.
-exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules", "public", "public_prod"]
 # Watch these directories if you specified.
-include_dir = ['public*']
+include_dir = ['api', 'server', 'localizer']
 # Exclude files.
 exclude_file = []
 # Exclude unchanged files.

@@ -13,7 +13,7 @@ RELEASE_PATH=$(CURDIR)/release
 GOCMD=$(GOROOT)/bin/go
 DOCKERCMD=$(shell which docker)
 
-DOCKER_DEV_IMAGE=couchsport.back
+DOCKER_DEV_IMAGE=brisouamaury/couchsport.back
 DOCKER_PROD_IMAGE=brisouamaury/couchsport.back.prod
 
 DOCKERFILE_PROD=Dockerfile

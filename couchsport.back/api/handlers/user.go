@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/models"
 	"github.com/amaurybrisou/couchsport.back/api/stores"
 	log "github.com/sirupsen/logrus"
@@ -46,11 +47,10 @@ func (me userHandler) All(w http.ResponseWriter, r *http.Request) {
 //Profile returns the connected user profile
 func (me userHandler) Profile(userID uint, w http.ResponseWriter, r *http.Request) {
 	profile, err := me.Store.UserStore().GetProfile(userID)
-	locale := r.Header.Get("Accept-Language")
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf("could not get profile %s", "").Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (me userHandler) Profile(userID uint, w http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("user.could_not_get_profile", locale, nil)).Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -69,7 +69,6 @@ func (me userHandler) Profile(userID uint, w http.ResponseWriter, r *http.Reques
 //SignUp create a user account
 func (me userHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	r.Close = true
-	locale := r.Header.Get("Accept-Language")
 
 	if r.Body != nil {
 		defer r.Body.Close()
@@ -78,14 +77,14 @@ func (me userHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	user, err := me.parseBody(r.Body)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_request", locale, nil)).Error(), http.StatusBadRequest)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusBadRequest)
 		return
 	}
 
 	user, err = me.Store.UserStore().New(user)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("user.could_not_create", locale, map[string]string{"Error": err.Error()})).Error(), http.StatusForbidden)
+		http.Error(w, api_errors.ErrAlreadyExists.Error(), http.StatusForbidden)
 		return
 	}
 
@@ -93,7 +92,7 @@ func (me userHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("user.could_not_create", locale, map[string]string{"Error": err.Error()})).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrCouldNotCreate.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -102,7 +101,6 @@ func (me userHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 func (me userHandler) ChangePassword(userID uint, w http.ResponseWriter, r *http.Request) {
 	r.Close = true
-	locale := r.Header.Get("Accept-Language")
 
 	if r.Body != nil {
 		defer r.Body.Close()
@@ -111,14 +109,14 @@ func (me userHandler) ChangePassword(userID uint, w http.ResponseWriter, r *http
 	user, err := me.parseBody(r.Body)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_request", locale, nil)).Error(), http.StatusBadRequest)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusBadRequest)
 		return
 	}
 
 	user, err = me.Store.UserStore().ChangePassword(userID, user)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_request", locale, nil)).Error(), http.StatusBadRequest)
+		http.Error(w, api_errors.ErrCouldNotUpdate.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -126,7 +124,7 @@ func (me userHandler) ChangePassword(userID uint, w http.ResponseWriter, r *http
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("internal_error", locale, nil)).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInternalError.Error(), http.StatusInternalServerError)
 	}
 
 	fmt.Fprint(w, string(json))
@@ -136,7 +134,6 @@ func (me userHandler) ChangePassword(userID uint, w http.ResponseWriter, r *http
 //Login authenticate the user
 func (me userHandler) Login(w http.ResponseWriter, r *http.Request) {
 	r.Close = true
-	locale := r.Header.Get("Accept-Language")
 
 	if r.Body != nil {
 		defer r.Body.Close()
@@ -145,32 +142,32 @@ func (me userHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user, err := me.parseBody(r.Body)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_request", locale, nil)).Error(), http.StatusBadRequest)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusBadRequest)
 		return
 	}
 
 	dbUser, err := me.Store.UserStore().GetByEmail(user.Email, false)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_credentials", locale, nil)).Error(), http.StatusUnauthorized)
+		http.Error(w, api_errors.ErrNotFound.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	if r := comparePasswords(dbUser.Password, []byte(user.Password)); !r {
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_credentials", locale, nil)).Error(), http.StatusUnauthorized)
+		http.Error(w, api_errors.ErrAuth.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	isLogged, err := me.Store.SessionStore().CreateOrRetrieve(dbUser.ID)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("internal_error", locale, nil)).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInternalError.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if !isLogged {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("invalid_credentials", locale, nil)).Error(), http.StatusUnauthorized)
+		http.Error(w, api_errors.ErrAuth.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -178,7 +175,7 @@ func (me userHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("internal_error", locale, nil)).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInternalError.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -195,7 +192,7 @@ func (me userHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("internal_error", locale, nil)).Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInternalError.Error(), http.StatusInternalServerError)
 	}
 
 	fmt.Fprint(w, string(json))
@@ -204,30 +201,23 @@ func (me userHandler) Login(w http.ResponseWriter, r *http.Request) {
 //IsLogged is a middleware used to know if user is Logged
 func (me userHandler) IsLogged(pass func(userID uint, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		locale := r.Header.Get("Accept-Language")
 
 		session, err := me.Store.SessionStore().GetSession(r)
 		if err != nil {
 			log.Error(err)
-			http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("please_login", locale, nil)).Error(), http.StatusUnauthorized)
+			http.Error(w, http.ErrNoCookie.Error(), http.StatusForbidden)
 			return
 		}
 
 		if session.HasExpired() {
 			if ok, err := me.Store.SessionStore().Destroy(r); !ok && err != nil {
 				log.Error(err)
-				http.Error(w, fmt.Errorf("internal error %s", "").Error(), http.StatusInternalServerError)
-				return
-			}
-
-			if err != nil {
-				log.Error(err)
-				http.Error(w, fmt.Errorf("internal error %s", "").Error(), http.StatusInternalServerError)
+				http.Error(w, api_errors.ErrSessionExpired.Error(), http.StatusForbidden)
 				return
 			}
 
 			log.Error(err)
-			http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("session_expired", locale, nil)).Error(), http.StatusUnauthorized)
+			http.Error(w, api_errors.ErrSessionExpired.Error(), http.StatusUnauthorized)
 			return
 		}
 
@@ -238,11 +228,10 @@ func (me userHandler) IsLogged(pass func(userID uint, w http.ResponseWriter, r *
 //Logout log out the user
 func (me userHandler) Logout(_ uint, w http.ResponseWriter, r *http.Request) {
 	r.Close = true
-	locale := r.Header.Get("Accept-Language")
 	success, err := me.Store.SessionStore().Destroy(r)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf(me.Store.Localizer().Translate("internal_error", locale, nil)).Error(), http.StatusInternalServerError)
+		http.Error(w, http.ErrNoCookie.Error(), 200)
 		return
 	}
 	fmt.Fprint(w, `{ "Result" : `+strconv.FormatBool(success)+` }`)

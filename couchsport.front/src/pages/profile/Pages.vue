@@ -136,13 +136,15 @@
       ...mapMutations(NAMESPACE, [EDIT_PAGE]),
       onPageSaved(state) {
         if (state) {
-          this.$snackbar(this.$t('message.success_saving', [this.$t('page')]))
-        } else {
-          this.$snackbar({
-            text: this.$t('message.error_saving', [this.$t('page')]),
-            color: 'error'
-          })
+          return this.$snackbar(
+            this.$t('message.success_saving', [this.$t('page')])
+          )
         }
+
+        this.$snackbar({
+          text: this.$t('message.error_saving', [this.$t('page')]),
+          color: 'error'
+        })
       },
       editPage(id) {
         this.EDIT_PAGE(id)

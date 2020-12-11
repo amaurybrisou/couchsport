@@ -233,38 +233,69 @@
         return { from_id: null, to_id: null, email: this.email, Text: '' }
       }
     },
+    watch: {
+      $route: function (newValue) {
+        newValue.name === 'conversations' && this.fetch()
+      }
+    },
     mounted() {
-      this.GET_CONVERSATIONS()
+      this.fetch()
     },
     methods: {
       ...mapActions(NAMESPACE, [GET_CONVERSATIONS, REMOVE_CONVERSATION]),
-      openMessageDialog: function (c) {
+      fetch() {
+        this.GET_CONVERSATIONS().catch(() => {
+          this.$snackbar({
+            text: this.$t('message.error_fetching', [this.$t('conversations')]),
+            color: 'error'
+          })
+        })
+      },
+      openMessageDialog(c) {
         this.showContactDialog = true
         this.message.to_id =
           c.from_id === this.connected_profile_id ? c.to_id : c.from_id
         this.focusedConversation = c
       },
-      reply: function () {
+      reply() {
+        this.$loader(true)
         this.$messenger
           .sendMessage(this.message)
           .then(() => {
-            this.$snackbar('Your messages has been sent')
+            this.$snackbar({
+              text: this.$t('message.success_sending', [this.$t('_message')])
+            })
           })
           .catch(() => {
-            tihs.$snackbar('An error occured while sending your message')
+            this.$snackbar({
+              text: this.$t('message.error_sending', [this.$t('_message')]),
+              color: 'error'
+            })
           })
+          .finally(this.$loader(false))
       },
-      async deleteConversation(c) {
+      deleteConversation(c) {
         this.focusedConversation = c
 
         if (c.id != null) {
+          this.$loader(true)
           this.REMOVE_CONVERSATION(c.id)
             .then(() => {
-              this.$snackbar('this conversation has been successfully deleted')
+              this.$snackbar({
+                text: this.$t('message.success_deleting', [
+                  this.$t('conversation')
+                ])
+              })
             })
             .catch(() => {
-              this.$snackbar('there was an error deleting this conversation')
+              this.$snackbar({
+                text: this.$t('message.error_deleting', [
+                  this.$t('conversation')
+                ]),
+                color: 'error'
+              })
             })
+            .finally(this.$loader(false))
         }
       }
     }

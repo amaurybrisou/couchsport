@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/stores"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
@@ -35,20 +35,21 @@ func (me *wsHandler) EntryPoint(w http.ResponseWriter, r *http.Request) {
 	stringID := r.URL.Query().Get("id")
 	if stringID == "" {
 		log.Error("ws: invalid id")
-		http.Error(w, fmt.Errorf("ws: invalid id %s", stringID).Error(), http.StatusBadRequest)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusBadRequest)
 		return
 	}
 
 	id, err := strconv.Atoi(stringID)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, fmt.Errorf("%s", err).Error(), http.StatusBadRequest)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusBadRequest)
 		return
 	}
 
 	conn, err := me.WsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Error(err)
+		http.Error(w, api_errors.ErrInvalidData.Error(), http.StatusBadRequest)
 		return
 	}
 

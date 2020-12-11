@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/amaurybrisou/couchsport.back/api/api_errors"
 	"github.com/amaurybrisou/couchsport.back/api/stores"
 	log "github.com/sirupsen/logrus"
 )
@@ -18,7 +19,7 @@ func (app languageHandler) All(w http.ResponseWriter, r *http.Request) {
 	languages, err := app.Store.LanguageStore().All()
 	if err != nil {
 		log.Error(err)
-		http.Error(w, http.ErrNotSupported.Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrNotFound.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -26,7 +27,7 @@ func (app languageHandler) All(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Error(err)
-		http.Error(w, http.ErrNotSupported.Error(), http.StatusInternalServerError)
+		http.Error(w, api_errors.ErrInternalError.Error(), http.StatusInternalServerError)
 		return
 	}
 

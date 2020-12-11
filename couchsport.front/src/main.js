@@ -17,9 +17,12 @@ const router = NewRouter(store)
 import filters from 'plugins/filter'
 Vue.use(filters)
 
+const sslEnable = process.env.NODE_ENV === 'production'
+
 import websocket from 'plugins/websocket'
 Vue.use(websocket, {
   namespace: 'ws',
+  ssl: sslEnable,
   store: store
 })
 

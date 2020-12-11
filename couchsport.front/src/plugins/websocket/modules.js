@@ -26,10 +26,8 @@ const actions = {
       Vue.prototype.$socket.sendObj(message)
     }
   },
-  [SOCKET_CONNECT]: (_, profileID) => {
-    Vue.prototype.$connect(
-      `ws://${window.location.hostname}:${window.location.port}/api/ws?id=${profileID}`
-    )
+  [SOCKET_CONNECT]: (_, url) => {
+    Vue.prototype.$connect(url)
   }
 }
 

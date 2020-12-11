@@ -58,6 +58,8 @@ services:
       ENV: ${ENV}
     volumes:
       - ./couchsport.back/public:/public_prod
+      - ./selfsigned.crt:/etc/letsencrypt/live/fullchain.pem
+      - ./selfsigned.key:/etc/letsencrypt/live/privkey.pem
 
   couchsport.front:
     extends:
@@ -71,8 +73,6 @@ services:
       context: ./couchsport.front
       dockerfile: Dockerfile
       target: release
-    # entrypoint:
-    #   ["wait-for-it.sh", "172.18.0.2:9000", "--", "nginx", "-g", "daemon off;"]
     networks:
       front_back:
         ipv4_address: "172.18.0.3"
@@ -80,6 +80,7 @@ services:
     environment:
       NODE_ENV: ${ENV}
     ports:
-      - "8081:80"
-    # volumes:
-    #   - ./wait-for-it.sh:/usr/bin/wait-for-it.sh
+      - "8081:443"
+    volumes:
+      - ./selfsigned.crt:/etc/letsencrypt/live/fullchain.pem
+      - ./selfsigned.key:/etc/letsencrypt/live/privkey.pem

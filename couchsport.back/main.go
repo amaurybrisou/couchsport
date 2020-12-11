@@ -19,15 +19,23 @@ import (
 )
 
 func main() {
-	env := viper.GetString("ENV")
 	viper.AutomaticEnv()
 
+	env := viper.GetString("ENV")
 	languageFiles := viper.GetStringSlice("LANGUAGE_FILES")
 	localizer := localizer.NewLocalizer(languageFiles)
 
-	srv := server.NewInstance()
+	var api *server.Instance
+	var staticSrv *server.StaticInstance
+	if env != "production" {
+		api = server.NewHTTPInstance()
+		staticSrv = server.NewStaticHTTPInstance()
+	} else {
+		api = server.NewHTTPSInstance()
+		staticSrv = server.NewStaticHTTPSInstance()
+	}
 
-	storeFactory := stores.NewStoreFactory(srv.Db, localizer)
+	storeFactory := stores.NewStoreFactory(api.Db, localizer)
 	storeFactory.Init(viper.GetBool("POPULATE"))
 
 	allowedDomains := viper.GetStringSlice("ALLOWED_DOMAINS")
@@ -56,59 +64,57 @@ func main() {
 
 	validators.Init()
 
-	srv.RegisterHandler("/ws", handlerFactory.WsHandler().EntryPoint)
+	api.RegisterHandler("/ws", handlerFactory.WsHandler().EntryPoint)
 
-	srv.RegisterHandler("/languages", handlerFactory.LanguageHandler().All)
-	srv.RegisterHandler("/activities", handlerFactory.ActivityHandler().All)
+	api.RegisterHandler("/languages", handlerFactory.LanguageHandler().All)
+	api.RegisterHandler("/activities", handlerFactory.ActivityHandler().All)
 
-	srv.RegisterHandler("/conversations/message/send", handlerFactory.ConversationHandler().HandleMessage)
-	srv.RegisterHandler("/conversations/delete", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/conversations/message/send", handlerFactory.ConversationHandler().HandleMessage)
+	api.RegisterHandler("/conversations/delete", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.ConversationHandler().Delete),
 	)
 
-	srv.RegisterHandler("/pages", handlerFactory.PageHandler().All)
-	srv.RegisterHandler("/pages/new", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/pages", handlerFactory.PageHandler().All)
+	api.RegisterHandler("/pages/new", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.PageHandler().New),
 	)
-	srv.RegisterHandler("/pages/update", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/pages/update", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.PageHandler().Update),
 	)
-	srv.RegisterHandler("/pages/publish", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/pages/publish", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.PageHandler().Publish),
 	)
-	srv.RegisterHandler("/pages/delete", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/pages/delete", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.PageHandler().Delete),
 	)
 
-	srv.RegisterHandler("/images/delete", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/images/delete", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.ImageHandler().Delete),
 	)
 
-	// srv.RegisterHandler("/users", handlerFactory.UserHandler().All)
+	// api.RegisterHandler("/users", handlerFactory.UserHandler().All)
 
-	srv.RegisterHandler("/profiles/update", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/profiles/update", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.ProfileHandler().Update),
 	)
-	srv.RegisterHandler("/profiles/mine", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/profiles/mine", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.UserHandler().Profile),
 	)
-	srv.RegisterHandler("/profiles/pages", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/profiles/pages", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.PageHandler().ProfilePages),
 	)
-	srv.RegisterHandler("/profile/conversations", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/profile/conversations", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.ConversationHandler().ProfileConversations),
 	)
 
-	srv.RegisterHandler("/login", handlerFactory.UserHandler().Login)
-	srv.RegisterHandler("/signup", handlerFactory.UserHandler().SignUp)
-	srv.RegisterHandler("/logout", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/login", handlerFactory.UserHandler().Login)
+	api.RegisterHandler("/signup", handlerFactory.UserHandler().SignUp)
+	api.RegisterHandler("/logout", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.UserHandler().Logout),
 	)
-	srv.RegisterHandler("/users/change-password", handlerFactory.UserHandler().IsLogged(
+	api.RegisterHandler("/users/change-password", handlerFactory.UserHandler().IsLogged(
 		handlerFactory.UserHandler().ChangePassword),
 	)
-
-	staticSrv := server.InitStatic()
 
 	signalChan := make(chan os.Signal, 1)
 	signalDone := make(chan bool)
@@ -127,7 +133,7 @@ func main() {
 
 		log.Info("Static HTTPServer gracefully closed")
 
-		if err := srv.HTTPServer.Shutdown(ctx); err != nil {
+		if err := api.Shutdown(ctx); err != nil {
 			log.Panic(err)
 		}
 		log.Info("HTTPServer gracefully closed")
@@ -135,13 +141,8 @@ func main() {
 		close(signalDone)
 	}()
 
-	go func() {
-		if err := staticSrv.ListenAndServe(); err != http.ErrServerClosed {
-			log.Fatal(err)
-		}
-	}()
-
-	srv.Start()
+	staticSrv.Start()
+	api.Start()
 
 	<-signalDone
 }
