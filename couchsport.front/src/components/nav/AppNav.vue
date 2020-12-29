@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <v-system-bar color="primary" window height="36vh">
+    <v-system-bar id="app-nav" color="primary" window height="36vh">
       <v-btn :to="{ name: 'home' }" exact text tile>
         <v-icon>mdi-home</v-icon>
       </v-btn>
@@ -119,6 +119,10 @@
 </script>
 
 <style lang="scss">
+  #app-nav {
+    padding: 0;
+  }
+
   .new-message-link {
     text-decoration: none;
     color: none;
