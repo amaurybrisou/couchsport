@@ -1,3 +1,7 @@
 .mysql_database*
 .env*
 **public**
+*.history/**
+*.crt
+*.pem
+*.key

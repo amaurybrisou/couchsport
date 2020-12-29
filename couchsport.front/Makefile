@@ -18,7 +18,7 @@ DOCKER_IMAGE_PROD=brisouamaury/couchsport.front.prod
 
 ## build development docker image
 build-dev:
-	DOCKER_BUILDKIT=1 $(DOCKERCMD) build --no-cache . --platform $(ENV) --progress plain -t $(DOCKER_IMAGE_DEV)
+	DOCKER_BUILDKIT=1 $(DOCKERCMD) build . --target run-dev --platform $(ENV) --progress plain -t $(DOCKER_IMAGE_DEV)
 
 ## run development docker image
 run-dev:
