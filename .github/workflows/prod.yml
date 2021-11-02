@@ -66,5 +66,6 @@ jobs:
           envs: UPLOAD_PATH,REMOTE_TARGET,REMOTE_USER
           script_stop: true
           script: |
+            rm $REMOTE_TARGET/master
             ln -sfT $UPLOAD_PATH $REMOTE_TARGET/master
             cd $UPLOAD_PATH && make pull && make start
