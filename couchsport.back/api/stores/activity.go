@@ -3,7 +3,6 @@ package stores
 import (
 	"github.com/amaurybrisou/couchsport.back/api/models"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type activityStore struct {
@@ -19,8 +18,9 @@ func (me activityStore) Migrate() {
 
 	activities := []string{"acrosport", "alpinisme", "apnée", "badminton", "basejump", "basketball", "bmx", "canoëkayak", "canyoning", "course", "coursedorientation", "crosse", "cyclisme", "danse", "équitation", "escalade", "football", "golf", "handball", "hiking", "kitesurfing", "marathon", "paddle", "pêche", "rafting", "roller", "skateboard", "skialpin", "skidefond", "skinautique", "skinordique", "snowboard", "surf", "tennis", "tiràlarc", "ulm", "wakeboard", "yoga", "windsurf"}
 
-	me.Db.Clauses(clause.OnConflict{DoNothing: true}).Create(&activities)
-
+	for _, a := range activities {
+		me.Db.FirstOrCreate(&models.Activity{Name: a}, models.Activity{Name: a})
+	}
 }
 
 //All Returns all the activities
